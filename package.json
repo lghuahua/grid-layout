@@ -1,0 +1,53 @@
+{
+  "name": "grid-layout",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/grid-layout.umd.cjs",
+  "module": "./dist/grid-layout.js",
+  "types": "types/grid-layout.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/grid-layout.js",
+      "require": "./dist/grid-layout.umd.cjs",
+      "types": "./dist/grid-layout.d.ts"
+    },
+    "./style.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "grid",
+    "vue3",
+    "drag",
+    "draggable",
+    "resize",
+    "resizable"
+  ],
+  "author": "ligh",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:type": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json",
+    "changelog": "conventional-changelog -p -i CHANGELOG.md -s"
+  },
+  "peerDependencies": {
+    "vue": "^3.2.47"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.1.2",
+    "interactjs": "^1.10.17"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.35.4",
+    "@types/node": "^20.3.1",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "conventional-changelog-cli": "^3.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vue": "^3.2.47",
+    "vue-tsc": "^1.4.2"
+  }
+}
