@@ -1,16 +1,16 @@
 {
-  "name": "grid-layout",
-  "private": true,
-  "version": "0.0.1",
+  "name": "grid-layout-vue",
+  "version": "0.0.0",
+  "description": "A draggable and resizable grid layout, as a Vue component.",
   "type": "module",
-  "main": "./dist/grid-layout.umd.cjs",
-  "module": "./dist/grid-layout.js",
-  "types": "types/grid-layout.d.ts",
+  "main": "./dist/grid-layout-vue.umd.cjs",
+  "module": "./dist/grid-layout-vue.js",
+  "types": "types/grid-layout-vue.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/grid-layout.js",
-      "require": "./dist/grid-layout.umd.cjs",
-      "types": "./dist/grid-layout.d.ts"
+      "import": "./dist/grid-layout-vue.js",
+      "require": "./dist/grid-layout-vue.umd.cjs",
+      "types": "./dist/grid-layout-vue.d.ts"
     },
     "./style.css": "./dist/style.css",
     "./dist/style.css": "./dist/style.css"
@@ -32,6 +32,11 @@
     "build": "vite build",
     "build:type": "vue-tsc -p tsconfig.build.json && api-extractor run -c api-extractor.json",
     "changelog": "conventional-changelog -p -i CHANGELOG.md -s"
+  },
+  "homepage": "https://github.com/lghuahua/grid-layout#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lghuahua/grid-layout.git"
   },
   "peerDependencies": {
     "vue": "^3.2.47"
