@@ -9,51 +9,21 @@
   </div>
 </template>
 <script setup lang="ts">
-import { PropType, computed, onBeforeUnmount, provide, reactive, toRef, ref } from 'vue'
+import { computed, provide, reactive, toRef, ref } from 'vue'
 import GridItem from './gridItem.vue'
 import { layoutContextKey, isResizableKey, isDraggableKey, colNumKey, colWidthKey, compact, rowHeightKey, gapKey, moveElement, getAllCollisions, getLayoutItem } from './utils'
 import { useResizeObserver } from '@vueuse/core'
-import { Layout, EventParam, LayoutItemContext, LayoutContext } from './type'
+import { Layout, EventParam, LayoutItemContext, LayoutContext, LayoutProps } from './type'
 
-const props = defineProps({
-  colNum: {
-    type: Number,
-    default: 12
-  },
-  rowHeight: {
-    type: Number,
-    default: 50
-  },
-  gap: {
-    type: [Number, Array<number>],
-    default: 10
-  },
-  layout: {
-    type: Array as PropType<Layout>,
-    required: true
-  },
-  isResizable: {
-    type: Boolean,
-    default: true
-  },
-  isDraggable: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * 布局是否垂直压缩。
-   */
-  verticalCompact: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * 防止碰撞属性，值设置为 true 时，栅格只能拖动至空白处。
-   */
-  preventCollision: {
-    type: Boolean,
-    default: false
-  }
+const props = withDefaults(defineProps<LayoutProps>(), {
+  colNum: 12,
+  rowHeight: 50,
+  gap: 10,
+  layout: () => [] as Layout,
+  isResizable: true,
+  isDraggable: true,
+  verticalCompact: true,
+  preventCollision: false
 })
 const layoutEl = ref()
 const width = ref(100)
@@ -160,16 +130,11 @@ const resizeEvent: LayoutContext['resizeEvent'] = (event: EventParam) => {
 
   compact(layout, props.verticalCompact)
   emit('layout-updated', layout)
-  // EventBus.emit('compact', '')
   const filed = fileds.get(i)
   filed?.createStyle()
 }
 
 const fileds = new Map<number | string, LayoutItemContext>()
-// EventBus.on('resizeEvent', resizeEvent)
-onBeforeUnmount(() => {
-  // EventBus.off('resizeEvent', resizeEvent)
-})
 
 /*****  drag  *****/
 const dragEvent: LayoutContext['dragEvent'] = (event) => {
@@ -192,16 +157,9 @@ const dragEvent: LayoutContext['dragEvent'] = (event) => {
   moveElement(layout, lt, x, y, true, props.preventCollision)
   compact(layout, props.verticalCompact)
   emit('layout-updated', layout)
-  // EventBus.emit('compact', '')
   const filed = fileds.get(i)
   filed?.createStyle()
 }
-
-// EventBus.on('dragEvent', dragEvent)
-onBeforeUnmount(() => {
-  // EventBus.off('dragEvent', dragEvent)
-})
-
 
 const addField: LayoutContext['addField'] = (fild) => {
   fileds.set(fild.i, fild)

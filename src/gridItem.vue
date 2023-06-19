@@ -10,49 +10,15 @@ import interact from 'interactjs'
 import type { Interactable } from '@interactjs/core/Interactable'
 import type { ResizeEvent, DragEvent } from '@interactjs/types/index'
 import { layoutContextKey, isResizableKey, colNumKey, colWidthKey, rowHeightKey, gapKey, isDraggableKey } from './utils'
-import { LayoutItemContext } from './type'
+import { EventType, LayoutItemContext, LayoutItemProps } from './type'
 
-const props = defineProps({
-  isResizable: {
-    type: Boolean,
-    default: null
-  },
-  isDraggable: {
-    type: Boolean,
-    default: null
-  },
-  x: {
-    type: Number,
-    required: true
-  },
-  y: {
-    type: Number,
-    required: true
-  },
-  w: {
-    type: Number,
-    required: true
-  },
-  h: {
-    type: Number,
-    required: true
-  },
-  i: {
-    type: [Number, String],
-    required: true
-  },
-  static: {
-    type: Boolean,
-    default: false
-  },
-  dragIgnoreFrom: {
-    type: String,
-    default: 'a, button',
-  },
-  dragAllowFrom: {
-    type: String,
-    default: null,
-  }
+const props = withDefaults(defineProps<LayoutItemProps>(), {
+  x: 0,
+  y: 0,
+  w: 0,
+  h: 0,
+  i: -1,
+  dragIgnoreFrom: 'a, button'
 })
 
 const layoutContext = inject(layoutContextKey)
@@ -162,22 +128,13 @@ const handleResize = (event: ResizeEvent) => {
   const pos = calcWH(width, height)
 
   layoutContext?.resizeEvent({
-    eventType: type,
+    eventType: type as EventType,
     i: props.i,
     x: innerX.value,
     y: innerY.value,
     w: pos.w,
     h: pos.h
   })
-
-  // EventBus.emit('resizeEvent', {
-  //   eventType: type,
-  //   i: props.i,
-  //   x: innerX.value,
-  //   y: innerY.value,
-  //   w: pos.w,
-  //   h: pos.h
-  // })
 }
 
 /**
@@ -247,22 +204,13 @@ const handleDrag = (event: DragEvent) => {
   const pos = calcXY(top, left)
 
   layoutContext?.dragEvent({
-    eventType: type,
+    eventType: type as EventType,
     i: props.i,
     x: pos.x,
     y: pos.y,
     w: innerW.value,
     h: innerH.value
   })
-
-  // EventBus.emit('dragEvent', {
-  //   eventType: type,
-  //   i: props.i,
-  //   x: pos.x,
-  //   y: pos.y,
-  //   w: innerW.value,
-  //   h: innerH.value
-  // })
 }
 
 const style = reactive<{
@@ -330,11 +278,6 @@ watchEffect(() => {
 
   createStyle()
 })
-
-defineExpose({
-  createStyle
-})
-
 
 </script>
 <style>

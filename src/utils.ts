@@ -1,48 +1,5 @@
-import type { InjectionKey, ExtractPropTypes, PropType, Ref } from 'vue'
+import type { InjectionKey, Ref } from 'vue'
 import { Layout, LayoutItem, LayoutContext } from './type'
-
-export const layoutProps = {
-  colNum: {
-    type: Number,
-    default: 12
-  },
-  rowHeight: {
-    type: Number,
-    default: 50
-  },
-  gap: {
-    type: [Number, Array<number>],
-    default: 10
-  },
-  layout: {
-    type: Array as PropType<Layout>,
-    required: true
-  },
-  isResizable: {
-    type: Boolean,
-    default: true
-  },
-  isDraggable: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * 布局是否垂直压缩。
-   */
-  verticalCompact: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * 防止碰撞属性，值设置为 true 时，栅格只能拖动至空白处。
-   */
-  preventCollision: {
-    type: Boolean,
-    default: false
-  }
-}
-
-export type FormProps = ExtractPropTypes<typeof layoutProps>
 
 export const layoutContextKey: InjectionKey<LayoutContext> = Symbol('layoutContext')
 export const isResizableKey: InjectionKey<Ref<boolean>> = Symbol('isResizable')
