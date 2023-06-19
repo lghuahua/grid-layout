@@ -42,6 +42,8 @@ const calcXY = (top: number, left: number) => {
   let y = Math.round((top + rowGap) / (rowHeight.value + rowGap))
   let x = Math.round((left + colGap) / (colWidth.value + colGap))
 
+  x = Math.max(Math.min(x, colNum.value - innerW.value), 0);
+
   return { x, y }
 }
 

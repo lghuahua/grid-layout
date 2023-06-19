@@ -121,8 +121,8 @@ const resizeEvent: LayoutContext['resizeEvent'] = (event: EventParam) => {
     placeholder.i = i
     placeholder.x = x
     placeholder.y = y
-    placeholder.h = h
-    placeholder.w = w
+    placeholder.h = lt.h
+    placeholder.w = lt.w
     isDragging.value = true
   } else {
     isDragging.value = false
