@@ -128,6 +128,8 @@ const handleResize = (event: ResizeEvent) => {
   }
 
   const pos = calcWH(width, height)
+  if (pos.w < 1) pos.w = 1
+  if (pos.h < 1) pos.h = 1
 
   layoutContext?.resizeEvent({
     eventType: type as EventType,
@@ -248,8 +250,6 @@ const createStyle = () => {
   }
 }
 
-
-
 const context: LayoutItemContext = reactive({
   $el: itemElement,
   i: props.i,
@@ -283,6 +283,9 @@ watchEffect(() => {
 
 </script>
 <style>
+.grid-item{
+  position: relative;
+}
 .grid-item > .resizable-handle {
   position: absolute;
   right: 0;
