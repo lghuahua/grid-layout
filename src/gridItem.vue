@@ -180,32 +180,30 @@ const tryMakeDraggable = () => {
 
 const handleDrag = (event: DragEvent) => {
   if (props.static || isResizing.value) return
-  const { type } = event
-  const { width, height, left, top } = event.rect
+  const { type, dx, dy } = event
+  const { width, height } = event.rect
 
-  switch(type) {
-    case 'dragstart':
-      previousX.value = innerX.value
-      previousY.value = innerY.value
-      dragging.w = width
-      dragging.h = height
-      dragging.x = left
-      dragging.y = top
-
-      isDragging.value = true
-      break
-    case 'dragmove':
-      dragging.x = left
-      dragging.y = top
-      break
-    case 'dragend':
-      isDragging.value = false
-      dragging.x = 0
-      dragging.y = 0
-      break
+  if (type === 'dragstart') {
+    const [rowGap, colGap] = gap.value
+    previousX.value = innerX.value
+    previousY.value = innerY.value
+    dragging.w = width
+    dragging.h = height
+    dragging.x = previousX.value * (colGap + colWidth.value)
+    dragging.y = previousY.value * (rowGap + rowHeight.value)
+    isDragging.value = true
   }
+  if (type === 'dragmove') {
+    dragging.x += dx
+    dragging.y += dy
+  }
+  const pos = calcXY(dragging.y, dragging.x)
 
-  const pos = calcXY(top, left)
+  if (type === 'dragend') {
+    isDragging.value = false
+    dragging.x = 0
+    dragging.y = 0
+  }
 
   layoutContext?.dragEvent({
     eventType: type as EventType,
