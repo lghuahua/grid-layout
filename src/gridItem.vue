@@ -18,6 +18,10 @@ const props = withDefaults(defineProps<LayoutItemProps>(), {
   w: 0,
   h: 0,
   i: -1,
+  minW: 1,
+  maxW: Infinity,
+  minH: 1,
+  maxH: Infinity,
   dragIgnoreFrom: 'a, button'
 })
 
@@ -128,6 +132,9 @@ const handleResize = (event: ResizeEvent) => {
   }
 
   const pos = calcWH(width, height)
+  const { minW, maxW, minH, maxH } = props
+  pos.w = Math.max(minW, Math.min(maxW, pos.w))
+  pos.h = Math.max(minH, Math.min(maxH, pos.h))
   if (pos.w < 1) pos.w = 1
   if (pos.h < 1) pos.h = 1
 

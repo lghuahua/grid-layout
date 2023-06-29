@@ -8,16 +8,8 @@ export interface EventParam {
   h: number
 }
 
-export type LayoutItem = {
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  i: number | string,
-  static?: boolean
+export type LayoutItem = LayoutItemProps & {
   moved?: boolean
-  isDraggable?: boolean
-  isResizable?: boolean,
   [prop: string]: any
 }
 
@@ -61,7 +53,11 @@ export interface LayoutItemProps {
   i: number | string,
   static?: boolean,
   dragIgnoreFrom?: string,
-  dragAllowFrom?: string
+  dragAllowFrom?: string,
+  minW?: number,
+  maxW?: number,
+  minH?: number,
+  maxH?: number,
 }
 
 export type Layout = Array<LayoutItem>
