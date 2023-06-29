@@ -273,8 +273,15 @@ onBeforeUnmount(() => {
 watchEffect(() => {
   const { x, y, w, h } = props
   if (x + w > colNum.value) {
-    innerX.value = 0
-    innerW.value = Math.min(w, colNum.value)
+    // 列数超出后移动到第一列,否则会出现重叠
+    layoutContext?.dragEvent({
+      eventType: 'dragend',
+      i: props.i,
+      x: 0,
+      y: y,
+      w: Math.min(w, colNum.value),
+      h: h
+    })
   } else {
     innerX.value = x
     innerW.value = w

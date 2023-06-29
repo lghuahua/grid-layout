@@ -2,11 +2,12 @@
 import GridLayout from '../src/gridLayout.vue'
 import GridItem from '../src/gridItem.vue'
 import { reactive } from 'vue'
-import { Layout } from '../src/type'
+import { Layout, LayoutItem } from '../src/type'
 const state = reactive<{
-  layout: Layout
+  layout: Layout,
+  layoutC: Layout
 }>({layout: [
-  {"x":0,"y":0,"w":2,"h":1,"i":"0", static: false},
+  {"x":0,"y":0,"w":2,"h":1,"i":"0", minW: 2, static: false},
   {"x":2,"y":0,"w":2,"h":2,"i":"1", static: true},
   {"x":4,"y":0,"w":2,"h":3,"i":"2", static: false},
   {"x":6,"y":0,"w":2,"h":2,"i":"3", static: false},
@@ -26,14 +27,39 @@ const state = reactive<{
   {"x":10,"y":4,"w":2,"h":2,"i":"17", static: false},
   {"x":0,"y":9,"w":2,"h":3,"i":"18", static: false},
   {"x":2,"y":6,"w":2,"h":2,"i":"19", static: false, data: {}}
-]})
+],
+layoutC: [
+  {"x":8,"y":10,"w":2,"h":5,"i":"0", static: false},
+  {"x":10,"y":4,"w":2,"h":2,"i":"1", static: false},
+  {"x":0,"y":9,"w":2,"h":3,"i":"2", static: false},
+  {"x":2,"y":6,"w":2,"h":2,"i":"3", static: false, data: {}}
+]
+})
 
 const update = (layout: Layout) => {
   state.layout = layout
 }
+const changeLayoutC = () => {
+  state.layout = state.layoutC
+}
+const addItem = () => {
+  state.layout.push({
+    x: state.layout.length % 12,
+    y: 5,
+    w: 2,
+    h: 2,
+    i: state.layout.length
+  })
+}
+const removeItem = (i:  LayoutItem['i']) => {
+  const index = state.layout.map(item => item.i).indexOf(i);
+  state.layout.splice(index, 1);
+}
 </script>
 
 <template>
+  <button @click="changeLayoutC">切换布局</button>
+  <button @click="addItem">动态添加</button>
   <GridLayout :layout="state.layout" :isResizable="true" @layout-updated="update">
     <GridItem v-for="item, in state.layout"
       :key="item.i"
@@ -44,8 +70,10 @@ const update = (layout: Layout) => {
       :w="item.w"
       :h="item.h"
       :i="item.i"
+      :min-w="item.minW"
     >
       <div>{{ item.i }}</div>
+      <span class="remove" @click="removeItem(item.i)">x</span>
     </GridItem>
   </GridLayout>
 </template>
@@ -54,5 +82,11 @@ const update = (layout: Layout) => {
 .grid-item:not(.grid-placeholder) {
     background: #ccc;
     border: 1px solid black;
+}
+.remove {
+  position: absolute;
+  right: 2px;
+  top: 0;
+  cursor: pointer;
 }
 </style>

@@ -9,7 +9,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, provide, reactive, toRef, ref } from 'vue'
+import { computed, provide, reactive, toRef, ref, watch } from 'vue'
 import GridItem from './gridItem.vue'
 import { layoutContextKey, isResizableKey, isDraggableKey, colNumKey, colWidthKey, compact, rowHeightKey, gapKey, moveElement, getAllCollisions, getLayoutItem } from './utils'
 import { useResizeObserver } from '@vueuse/core'
@@ -33,7 +33,8 @@ useResizeObserver(layoutEl, entries => {
 })
 
 const emit = defineEmits<{
-  (event: 'layout-updated', layout: Layout): void
+  (event: 'layout-updated', layout: Layout): void,
+  (event: 'update:layout', layout: Layout): void
 }>()
 
 provide(isResizableKey, toRef(props, 'isResizable'))
@@ -41,10 +42,14 @@ provide(isDraggableKey, toRef(props, 'isDraggable'))
 provide(colNumKey, toRef(props, 'colNum'))
 provide(rowHeightKey, toRef(props, 'rowHeight'))
 
-let layout: Layout = JSON.parse(JSON.stringify(props.layout))
+let layout: Layout
 
-compact(layout, props.verticalCompact)
-emit('layout-updated', layout)
+watch([() => props.layout.length, () => props.layout], () => {
+  layout = compact(props.layout, props.verticalCompact)
+  emit('update:layout', layout)
+}, {
+  immediate: true
+})
 
 const gridGap = computed(() => {
   const { gap } = props
@@ -149,7 +154,6 @@ const dragEvent: LayoutContext['dragEvent'] = (event) => {
     placeholder.h = h
     isDragging.value = true
   } else {
-
     isDragging.value = false
   }
 
