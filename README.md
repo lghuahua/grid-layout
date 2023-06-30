@@ -1,5 +1,12 @@
 # grid-layout-vue
 
+<p align="center">
+ <img src="https://img.shields.io/npm/dm/grid-layout-vue.svg" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/grid-layout-vue"><img src="https://img.shields.io/npm/v/grid-layout-vue.svg" alt="Version"></a>
+  <a href="https://github.com/lghuahua/grid-layout/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/grid-layout-vue.svg" alt="License"></a>
+  <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/min/grid-layout-vue">
+</p>
+
 grid-layout-vue使用grid布局与[vue-grid-layout](https://github.com/jbaysolutions/vue-grid-layout)略有不同
 
 ## 安装
@@ -64,3 +71,7 @@ const update = (layout: Layout) => {
 </script>
 
 ```
+
+## License
+
+[MIT](https://github.com/lghuahua/grid-layout/blob/main/LICENSE)
