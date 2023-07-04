@@ -91,7 +91,7 @@ let interactObj: Interactable
 function tryMakeResizable() {
   interactObj ||= interact(itemElement.value as HTMLElement)
 
-  if (!props.static) {
+  if (resizable.value && !props.static) {
     const opts = {
       edges: {
         left: `.${resizableHandleClass.value.trim().replace(' ', '.')}`,
@@ -197,6 +197,10 @@ const tryMakeDraggable = () => {
       handleDrag(event);
     })
 
+  } else {
+    interactObj.draggable({
+      enabled: false
+    })
   }
 }
 
