@@ -26,6 +26,11 @@ export interface LayoutContext {
   resizeEvent: (event: EventParam) => void
 }
 
+export type Step = {
+  x: number,
+  y: number
+}
+
 export interface LayoutProps {
   colNum?: number,
   rowHeight?: number,
@@ -40,7 +45,11 @@ export interface LayoutProps {
   /**
    * 防止碰撞属性，值设置为 true 时，栅格只能拖动至空白处。
   */
-  preventCollision?: boolean
+  preventCollision?: boolean,
+  /**
+   * 设置移动步长，为 true 时x方向为列宽，y方向为行高，可自定义x, y
+   * */
+  stepSize?: Step | boolean
 }
 
 export interface LayoutItemProps {
@@ -57,7 +66,7 @@ export interface LayoutItemProps {
   minW?: number,
   maxW?: number,
   minH?: number,
-  maxH?: number,
+  maxH?: number
 }
 
 export type Layout = Array<LayoutItem>

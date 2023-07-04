@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { computed, provide, reactive, toRef, ref, watch } from 'vue'
 import GridItem from './gridItem.vue'
-import { layoutContextKey, isResizableKey, isDraggableKey, colNumKey, colWidthKey, compact, rowHeightKey, gapKey, moveElement, getAllCollisions, getLayoutItem } from './utils'
+import { layoutContextKey, isResizableKey, isDraggableKey, colNumKey, colWidthKey, compact, rowHeightKey, gapKey, moveElement, getAllCollisions, getLayoutItem, stepKey } from './utils'
 import { useResizeObserver } from '@vueuse/core'
 import { Layout, EventParam, LayoutItemContext, LayoutContext, LayoutProps } from './type'
 
@@ -66,6 +66,17 @@ const colW = computed(() => {
   return (width.value - (gridGap.value[1] * (col.value - 1))) / col.value
 })
 provide(colWidthKey, colW)
+
+const step = computed(() => {
+  const { stepSize } = props
+  if (!stepSize) return false
+  return stepSize == true ? {
+    x: colW.value,
+    y: props.rowHeight
+  } : stepSize
+})
+
+provide(stepKey, step)
 
 const style = computed(() => {
   const [rowGap, colGap] = gridGap.value

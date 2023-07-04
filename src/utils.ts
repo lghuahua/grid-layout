@@ -1,5 +1,5 @@
 import type { InjectionKey, Ref } from 'vue'
-import { Layout, LayoutItem, LayoutContext } from './type'
+import { Layout, LayoutItem, LayoutContext, Step } from './type'
 
 export const layoutContextKey: InjectionKey<LayoutContext> = Symbol('layoutContext')
 export const isResizableKey: InjectionKey<Ref<boolean>> = Symbol('isResizable')
@@ -8,6 +8,7 @@ export const colNumKey: InjectionKey<Ref<number>> = Symbol('colNum')
 export const colWidthKey: InjectionKey<Ref<number>> = Symbol('colWidth')
 export const rowHeightKey: InjectionKey<Ref<number>> = Symbol('rowHeight')
 export const gapKey: InjectionKey<Ref<number[]>> = Symbol('gap')
+export const stepKey: InjectionKey<Ref<Step | boolean>> = Symbol('step')
 
 export function sortLayoutItemsByRowCol(layout: Layout): Layout {
   return layout.sort((a, b) => {

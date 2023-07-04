@@ -9,7 +9,8 @@ import { ref, inject, toRef, watch, nextTick, computed, reactive, onMounted, wat
 import interact from 'interactjs'
 import type { Interactable } from '@interactjs/core/Interactable'
 import type { ResizeEvent, DragEvent } from '@interactjs/types/index'
-import { layoutContextKey, isResizableKey, colNumKey, colWidthKey, rowHeightKey, gapKey, isDraggableKey } from './utils'
+import type { Modifier } from '@interactjs/modifiers/types'
+import { layoutContextKey, isResizableKey, colNumKey, colWidthKey, rowHeightKey, gapKey, isDraggableKey, stepKey } from './utils'
 import { EventType, LayoutItemContext, LayoutItemProps } from './type'
 
 const props = withDefaults(defineProps<LayoutItemProps>(), {
@@ -60,6 +61,18 @@ const innerY = ref(props.y)
 const innerW = ref(props.w)
 const innerH = ref(props.h)
 
+const step = inject(stepKey, ref(false))
+const modifiers: Modifier[] = []
+if (step.value && step.value != true) {
+  modifiers.push(
+    interact.modifiers.snap({
+      targets: [
+        interact.snappers.grid(step.value)
+      ]
+    })
+  )
+}
+
 const resizableHandleClass = computed(() => {
   return 'resizable-handle'
 })
@@ -85,7 +98,8 @@ function tryMakeResizable() {
         right: true,
         bottom: `.${resizableHandleClass.value.trim().replace(' ', '.')}`,
         top: false
-      }
+      },
+      modifiers
     }
 
     interactObj.resizable(opts)
@@ -174,7 +188,8 @@ const tryMakeDraggable = () => {
   if (draggable.value && !props.static) {
     const opts = {
       ignoreFrom: props.dragIgnoreFrom,
-      allowFrom: props.dragAllowFrom
+      allowFrom: props.dragAllowFrom,
+      modifiers
     }
 
     interactObj.draggable(opts)
