@@ -3,7 +3,7 @@
 <p align="center">
  <img src="https://img.shields.io/npm/dm/grid-layout-vue.svg" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/grid-layout-vue"><img src="https://img.shields.io/npm/v/grid-layout-vue.svg" alt="Version"></a>
-  <a href="https://github.com/lghuahua/grid-layout/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/grid-layout-vue.svg" alt="License"></a>
+  <a href="https://github.com/lghuahua/grid-layout/blob/main/LICENSE"><img src="https://img.shields.io/github/license/lghuahua/grid-layout" alt="License"></a>
   <img alt="npm bundle size" src="https://img.shields.io/bundlephobia/min/grid-layout-vue">
 </p>
 
