@@ -1,19 +1,17 @@
 <template>
   <div class="grid-layout" ref="layoutEl" :style="style">
     <slot />
-    <GridItem
-      v-show="isDragging"
-      class="grid-placeholder"
-      v-bind="placeholder"
-    ></GridItem>
+    <GridItem v-show="isDragging" class="grid-placeholder" v-bind="placeholder"></GridItem>
   </div>
 </template>
 <script setup lang="ts">
 import { computed, provide, reactive, toRef, ref, watch } from 'vue'
+
 import GridItem from './gridItem.vue'
 import { layoutContextKey, isResizableKey, isDraggableKey, colNumKey, colWidthKey, compact, rowHeightKey, gapKey, moveElement, getAllCollisions, getLayoutItem, stepKey } from './utils'
 import { useResizeObserver } from '@vueuse/core'
-import { Layout, EventParam, LayoutItemContext, LayoutContext, LayoutProps } from './type'
+import { Layout, EventParam, LayoutItemContext, LayoutContext, LayoutProps, RequiredProps } from './type'
+import { useResponsive } from './useResponsive'
 
 const props = withDefaults(defineProps<LayoutProps>(), {
   colNum: 12,
@@ -23,8 +21,13 @@ const props = withDefaults(defineProps<LayoutProps>(), {
   isResizable: true,
   isDraggable: true,
   verticalCompact: true,
-  preventCollision: false
+  preventCollision: false,
+  responsive: false,
+  breakpoints: () => ({ xxs: 0, xs: 480, sm: 768, md: 992, lg: 1200, xl: 1920 })
 })
+
+const breakpoint = useResponsive(props.breakpoints, props.responsiveLayouts || {})
+
 const layoutEl = ref()
 const width = ref(100)
 useResizeObserver(layoutEl, entries => {
@@ -34,7 +37,8 @@ useResizeObserver(layoutEl, entries => {
 
 const emit = defineEmits<{
   (event: 'layout-updated', layout: Layout): void,
-  (event: 'update:layout', layout: Layout): void
+  (event: 'update:layout', layout: Layout): void,
+  (event: 'breakpoint-changed', breakpoints: string[], layout: Layout): void
 }>()
 
 provide(isResizableKey, toRef(props, 'isResizable'))
@@ -43,10 +47,31 @@ provide(colNumKey, toRef(props, 'colNum'))
 provide(rowHeightKey, toRef(props, 'rowHeight'))
 
 let layout: Layout
+let originalLayout = props.layout
+
+const responsiveGridLayout = () => {
+  if (props.responsive) {
+    if (breakpoint.layout.value) {
+      layout = compact(breakpoint.layout.value, props.verticalCompact)
+    }
+    emit('layout-updated', layout)
+    emit('breakpoint-changed', breakpoint.current.value, layout);
+  } else {
+    emit('layout-updated', originalLayout)
+  }
+}
+
+watch([
+  () => props.responsive,
+  () => breakpoint.current.value
+], () => {
+  responsiveGridLayout()
+}, { immediate: true })
+
 
 watch([() => props.layout.length, () => props.layout], () => {
-  layout = compact(props.layout, props.verticalCompact)
-  emit('update:layout', layout)
+  compact(props.layout, props.verticalCompact)
+  emit('update:layout', props.layout)
 }, {
   immediate: true
 })
@@ -90,13 +115,7 @@ const style = computed(() => {
   }
 })
 
-const placeholder = reactive<{
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  i: number | string
-}>({
+const placeholder = reactive<RequiredProps>({
   x: 0,
   y: 0,
   w: 0,
@@ -108,11 +127,11 @@ const isDragging = ref(false)
 
 const resizeEvent: LayoutContext['resizeEvent'] = (event: EventParam) => {
   const { eventType, i, x, y, h, w } = event
-  let lt = getLayoutItem(layout, i)
+  let lt = getLayoutItem(props.layout, i)
 
   let hasCollisions = false
   if (props.preventCollision) {
-    const collisions = getAllCollisions(layout, { ...lt, w, h }).filter(layoutItem => layoutItem.i !== i)
+    const collisions = getAllCollisions(props.layout, { ...lt, w, h }).filter(layoutItem => layoutItem.i !== i)
     hasCollisions = collisions.length > 0
 
     if (hasCollisions) {
@@ -144,8 +163,8 @@ const resizeEvent: LayoutContext['resizeEvent'] = (event: EventParam) => {
     isDragging.value = false
   }
 
-  compact(layout, props.verticalCompact)
-  emit('layout-updated', layout)
+  compact(props.layout, props.verticalCompact)
+  emit('layout-updated', props.layout)
   const filed = fileds.get(i)
   filed?.createStyle()
 }
@@ -155,7 +174,7 @@ const fileds = new Map<number | string, LayoutItemContext>()
 /*****  drag  *****/
 const dragEvent: LayoutContext['dragEvent'] = (event) => {
   const { eventType, i, x, y, h, w } = event
-  const lt = getLayoutItem(layout, i)
+  const lt = getLayoutItem(props.layout, i)
 
   if (eventType == 'dragmove' || eventType === 'dragstart') {
     placeholder.i = i
@@ -169,9 +188,9 @@ const dragEvent: LayoutContext['dragEvent'] = (event) => {
   }
 
   // Move the element to the dragged location.
-  moveElement(layout, lt, x, y, true, props.preventCollision)
-  compact(layout, props.verticalCompact)
-  emit('layout-updated', layout)
+  moveElement(props.layout, lt, x, y, true, props.preventCollision)
+  compact(props.layout, props.verticalCompact)
+  emit('layout-updated', props.layout)
   const filed = fileds.get(i)
   filed?.createStyle()
 }
@@ -195,11 +214,12 @@ provide(layoutContextKey, context)
 
 </script>
 <style scoped>
-.grid-layout{
+.grid-layout {
   display: grid;
   position: relative;
 }
-.grid-placeholder{
+
+.grid-placeholder {
   z-index: 2;
   user-select: none;
   background: pink;

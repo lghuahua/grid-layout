@@ -1,11 +1,13 @@
 export type EventType = 'dragstart' | 'dragend' | 'dragmove' | 'resizestart' | 'resizeend' | 'resizemove'
-export interface EventParam {
-  eventType: EventType,
+export type RequiredProps = {
   i: number | string,
   x: number,
   y: number,
   w: number,
   h: number
+}
+export interface EventParam extends RequiredProps {
+  eventType: EventType,
 }
 
 export type LayoutItem = LayoutItemProps & {
@@ -49,17 +51,24 @@ export interface LayoutProps {
   /**
    * 设置移动步长，为 true 时x方向为列宽，y方向为行高，可自定义x, y
    * */
-  stepSize?: Step | boolean
+  stepSize?: Step | boolean,
+  /** 布局是否为响应式 */
+  responsive?: boolean,
+  /** 如果 responsive 设置为 true，该配置将作为栅格中每个断点的初始布局。 */
+  responsiveLayouts?: ResponsiveLayout,
+  /**
+   * 为响应式布局设置断点。
+   * {@default}
+   * ```ts
+   * { xxs: 0, xs: 480, sm: 768, md: 992, lg: 1200, xl: 1920 }
+   * ```
+   * */
+  breakpoints?: Breakpoints
 }
 
-export interface LayoutItemProps {
+export interface LayoutItemProps extends RequiredProps {
   isResizable?: boolean,
   isDraggable?: boolean,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  i: number | string,
   static?: boolean,
   dragIgnoreFrom?: string,
   dragAllowFrom?: string,
@@ -70,3 +79,7 @@ export interface LayoutItemProps {
 }
 
 export type Layout = Array<LayoutItem>
+
+export type Breakpoints<K extends string = string> = Record<K, number>
+
+export type ResponsiveLayout<K extends string = string> = Partial<Record<K, Layout>>
